@@ -4,18 +4,16 @@ using Spectre.Console.Testing;
 
 namespace ConsoleApp.Tests;
 
-public class Tests
-{
+[TestFixture]
+public class ConsoleTests {
+
     [SetUp]
-    public void Setup()
-    {
-    }
+    public void Setup() { }
 
     [Test]
-    public async Task Test1()
-    {
+    public async Task TestConsole() {
         // From https://anthonysimmon.com/beautiful-interactive-console-apps-with-system-commandline-and-spectre-console/
-        
+
         var projectManager = A.Fake<IProjectManager>();
         A.CallTo(() => projectManager.ProjectTypes).Returns(["a", "b", "c", "d"]);
 
@@ -35,4 +33,5 @@ public class Tests
             .MustHaveHappenedOnceExactly();
         Assert.Pass();
     }
+
 }

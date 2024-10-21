@@ -22,7 +22,7 @@ public static class Program {
             new CreateProjectCommand()
         };
 
-        var builder = new CommandLineBuilder(rootCommand).UseDefaults()
+        var builder = new CommandLineBuilder(rootCommand).UseDefaults();
         builder.UseDefaults();
         builder.UseDependencyInjection(services => {
             services.AddSingleton<IProjectManager, NoopProjectManager>();

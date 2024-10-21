@@ -1,7 +1,3 @@
-
-
 namespace ConsoleApp.Commands;
 
-public interface ICommandOptions
-{
-}
+public interface ICommandOptions { }

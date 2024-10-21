@@ -7,7 +7,8 @@ namespace ConsoleApp.DependencyInjection;
 
 internal static class DependencyInjectionMiddleware {
 
-    public static CommandLineBuilder UseDependencyInjection(this CommandLineBuilder builder,
+    // ReSharper disable once UnusedMethodReturnValue.Global
+    internal static CommandLineBuilder UseDependencyInjection(this CommandLineBuilder builder,
         Action<ServiceCollection> configureServices) {
         return UseDependencyInjection(builder, (_, services) => configureServices(services));
     }
@@ -15,7 +16,7 @@ internal static class DependencyInjectionMiddleware {
     // This overload allows you to conditionally register services based on the command line invocation context
     // in order to improve startup time when you have a lot of services to register.
     // ReSharper disable once MemberCanBePrivate.Global
-    public static CommandLineBuilder UseDependencyInjection(this CommandLineBuilder builder,
+    internal static CommandLineBuilder UseDependencyInjection(this CommandLineBuilder builder,
         Action<InvocationContext, ServiceCollection> configureServices) {
         return builder.AddMiddleware(async (context, next) => {
             // Register our services in the modern Microsoft dependency injection container
@@ -25,23 +26,25 @@ internal static class DependencyInjectionMiddleware {
 
             services.TryAddSingleton(context.Console);
 
-            await using var serviceProvider = services.BuildServiceProvider();
-            // System.CommandLine's service provider is a "fake" implementation that relies on a dictionary of factories,
-            // but we can still make sure here that "true" dependency-injected services are available from "context.BindingContext".
-            // https://github.com/dotnet/command-line-api/blob/2.0.0-beta4.22272.1/src/System.CommandLine/Invocation/ServiceProvider.cs
-            context.BindingContext.AddService<IServiceProvider>(_ => serviceProvider);
+            await using (var serviceProvider = services.BuildServiceProvider()) {
+                var vServiceProvider = serviceProvider;
+                // System.CommandLine's service provider is a "fake" implementation that relies on a dictionary of factories,
+                // but we can still make sure here that "true" dependency-injected services are available from "context.BindingContext".
+                // https://github.com/dotnet/command-line-api/blob/2.0.0-beta4.22272.1/src/System.CommandLine/Invocation/ServiceProvider.cs
+                context.BindingContext.AddService<IServiceProvider>(_ => vServiceProvider);
 
-            foreach (var serviceType in uniqueServiceTypes) {
-                context.BindingContext.AddService(serviceType,
-                    _ => serviceProvider.GetRequiredService(serviceType));
+                foreach (var serviceType in uniqueServiceTypes) {
+                    context.BindingContext.AddService(serviceType,
+                        _ => vServiceProvider.GetRequiredService(serviceType));
 
-                // Enable support for "context.BindingContext.GetServices<>()" as in the modern dependency injection
-                var enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
-                context.BindingContext.AddService(enumerableServiceType,
-                    _ => serviceProvider.GetServices(serviceType));
+                    // Enable support for "context.BindingContext.GetServices<>()" as in the modern dependency injection
+                    var enumerableServiceType = typeof(IEnumerable<>).MakeGenericType(serviceType);
+                    context.BindingContext.AddService(enumerableServiceType,
+                        _ => vServiceProvider.GetServices(serviceType));
+                }
+
+                await next(context);
             }
-
-            await next(context);
         });
     }
 
