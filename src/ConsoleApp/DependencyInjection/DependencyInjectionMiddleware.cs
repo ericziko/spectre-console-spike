@@ -1,9 +1,9 @@
+using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-// ReSharper disable once CheckNamespace
-namespace System.CommandLine.Builder;
+namespace ConsoleApp.DependencyInjection;
 
 internal static class DependencyInjectionMiddleware {
 
@@ -25,7 +25,7 @@ internal static class DependencyInjectionMiddleware {
 
             services.TryAddSingleton(context.Console);
 
-            await using ServiceProvider serviceProvider = services.BuildServiceProvider();
+            await using var serviceProvider = services.BuildServiceProvider();
             // System.CommandLine's service provider is a "fake" implementation that relies on a dictionary of factories,
             // but we can still make sure here that "true" dependency-injected services are available from "context.BindingContext".
             // https://github.com/dotnet/command-line-api/blob/2.0.0-beta4.22272.1/src/System.CommandLine/Invocation/ServiceProvider.cs

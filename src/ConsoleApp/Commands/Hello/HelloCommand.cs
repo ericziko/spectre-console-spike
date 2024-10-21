@@ -1,6 +1,6 @@
 using System.CommandLine;
 
-namespace ConsoleApp;
+namespace ConsoleApp.Commands.Hello;
 
 public class HelloCommand : Command<HelloCommandOptions, HelloCommandOptionsHandler>
 {

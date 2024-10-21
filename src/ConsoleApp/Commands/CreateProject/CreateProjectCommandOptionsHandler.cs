@@ -1,7 +1,7 @@
 using System.CommandLine;
 using Spectre.Console;
 
-namespace ConsoleApp;
+namespace ConsoleApp.Commands.CreateProject;
 
 public class CreateProjectCommandOptionsHandler : ICommandOptionsHandler<CreateProjectCommandOptions>
 {

@@ -1,4 +1,4 @@
-namespace ConsoleApp;
+namespace ConsoleApp.Commands.CreateProject;
 
 public interface IProjectManager
 {

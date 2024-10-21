@@ -1,17 +1,8 @@
+using System.CommandLine;
 using System.CommandLine.NamingConventionBinder;
 using Microsoft.Extensions.DependencyInjection;
 
-// ReSharper disable once CheckNamespace
-namespace System.CommandLine;
-
-public interface ICommandOptions
-{
-}
-
-public interface ICommandOptionsHandler<in TOptions>
-{
-    Task<int> HandleAsync(TOptions options, CancellationToken cancellationToken);
-}
+namespace ConsoleApp.Commands;
 
 public abstract class Command<TOptions, TOptionsHandler> : Command
     where TOptions : class, ICommandOptions

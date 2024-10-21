@@ -1,3 +1,4 @@
+using ConsoleApp.Commands.CreateProject;
 using FakeItEasy;
 using Spectre.Console.Testing;
 
